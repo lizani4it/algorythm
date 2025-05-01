@@ -1,6 +1,7 @@
 import sys
 from fractions import Fraction
 from typing import List
+from prettytable import PrettyTable
 
 class SimplexSolver:
     def __init__(self):
@@ -285,19 +286,25 @@ class SimplexSolver:
                         print(f"x{i} = {val}")
         
         print("\nФинальная симплекс-таблица:")
+        x = PrettyTable()
         headers = [f"x{j+1}" for j in self.active_cols] + ["b"]
-        print("б.п. | " + " | ".join(headers))
+        x.field_names = ["б.п.", *headers]
+        #print("б.п. |\t" + " |\t".join(headers))
         
         for i in range(self.rows):
-            row_str = f"x{self.basis[i]+1} | " + " | ".join(str(self.table[i][j]) for j in range(len(self.active_cols))) + f" | {self.table[i][-1]}"
-            print(row_str)
+            row_str = f"x{self.basis[i]+1}   |\t" + "  |\t".join(str(self.table[i][j]) for j in range(len(self.active_cols))) + f" | {self.table[i][-1]}"
+            x.add_row(["x"+str(self.basis[i]+1), *self.table[i]])
+            #print(row_str)
         
         if self.phase == 1:
-            z_row_str = "M   | " + " | ".join(str(self.table[-1][j]) for j in range(len(self.active_cols))) + f" | {self.table[-1][-1]}"
+            z_row_str = "M    |\t" + " | \t".join(str(self.table[-1][j]) for j in range(len(self.active_cols))) + f" | {self.table[-1][-1]}"
+            x.add_row(["M", *self.table[-1]])
         else:
-            z_row_str = "Z   | " + " | ".join(str(self.table[-1][j]) for j in range(len(self.active_cols))) + f" | {self.table[-1][-1]}"
+            z_row_str = "Z    |\t" + "  |\t".join(str(self.table[-1][j]) for j in range(len(self.active_cols))) + f" | {self.table[-1][-1]}"
+            x.add_row(["Z", *self.table[-1]])
         
-        print(z_row_str)
+        #print(z_row_str)
+        print(x)
 
 def main():
     solver = SimplexSolver()
